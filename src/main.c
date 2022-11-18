@@ -20,6 +20,8 @@ How does the emulator work?
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
+#include "lcd.h"
+#include "key.h"
 
 static char rom[1048576];
 
@@ -30,7 +32,7 @@ void do_exit() // normal exit at SIGINT
 
 int main(int argc, char *argv[])
 {
-    if (argc != 2)
+    if (argc != 4)
     {
         fprintf(stderr, "Usage: mynes romfile.nes\n");
         exit(1);
@@ -52,6 +54,8 @@ int main(int argc, char *argv[])
         exit(1);
     }
     signal(SIGINT, do_exit);
+    lcd_init(argv[2]);
+    key_init(argv[3]);
     fce_init();
     fce_run();
     return 0;
