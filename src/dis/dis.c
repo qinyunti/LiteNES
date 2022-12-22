@@ -55,7 +55,7 @@ static void* dis_llopback(void* arg)
 
 	while(1)
 	{
-#if 1
+#if 0
 		if(s_flush_u8 != 0)
 		{
 			s_flush_u8 = 0;
@@ -90,14 +90,14 @@ void dis_flush(void)
 {
     s_flush_u8 = 1;
 	///printf("set flush\n");
-	#if 0
+	#if 1
 		if(s_flush_u8 != 0)
 		{
 			s_flush_u8 = 0;
 			rgb_to_yuv420p(s_yuv_buffer_au8, s_rgb_buffer_au8, DIS_WIDTH, DIS_HEIGHT);
 			memset(s_h264_buffer_au8,0,sizeof(s_h264_buffer_au8));
 			s_h264_len_i = x264_yuv420p2h264(s_yuv_buffer_au8,s_h264_buffer_au8,sizeof(s_h264_buffer_au8),DIS_WIDTH,DIS_HEIGHT);
-			printf("flush frame len=%d\n",s_h264_len_i);
+			//printf("flush frame len=%d\n",s_h264_len_i);
 		}
 		if(s_h264_len_i > 0)
 		{
@@ -106,14 +106,16 @@ void dis_flush(void)
 			rtp_send_h264(tmp+1, s_h264_len_i); 
 			free(tmp);
 			/* 帧率控制 */
-			usleep(100);
+			
 		}
 		#endif
+		usleep(100);
 }
 
 int dis_init(char* ip,int port)
 {
     rtp_h264_init(ip,port);
+	x264_init(DIS_WIDTH,DIS_HEIGHT);
 	pthread_t id;
 	/* 创建函数线程，并且指定函数线程要执行的函数 */
 	pthread_create(&id,NULL,dis_llopback,0);

@@ -5,17 +5,25 @@
 #include <unistd.h>
 #include <x264.h>
 
+x264_param_t param;
+x264_picture_t pic;
+x264_t *h;
+
+
+int x264_init(uint32_t width,uint32_t height)
+{
+
+
+}
+
+
+int x264_deinit(void)
+{
+
+}
+
 int x264_yuv420p2h264(uint8_t* src,uint8_t* dst, uint32_t dstlen,uint32_t width,uint32_t height)
 {
-    x264_param_t param;
-    x264_picture_t pic;
-    x264_picture_t pic_out;
-    x264_t *h;
-    x264_nal_t *nal;
-    int i_frame = 0;
-    int i_frame_size;
-    int i_nal;
-    int outlen = 0;
     /* Get default params for preset/tuning */
     if( x264_param_default_preset( &param, "medium", NULL ) < 0 )
     {
@@ -34,7 +42,7 @@ int x264_yuv420p2h264(uint8_t* src,uint8_t* dst, uint32_t dstlen,uint32_t width,
     param.i_log_level = X264_LOG_ERROR;
     
     /* Apply profile restrictions. */
-    if( x264_param_apply_profile( &param, "high" ) < 0 )
+    if( x264_param_apply_profile( &param, "baseline" ) < 0 )
     {
         printf("x264_param_apply_profile err\n");
         return -1;
@@ -55,6 +63,12 @@ int x264_yuv420p2h264(uint8_t* src,uint8_t* dst, uint32_t dstlen,uint32_t width,
         return -1;
     }
 
+    int i_nal;
+    int i_frame = 0;
+    int i_frame_size;
+    int outlen = 0;
+    x264_nal_t *nal;
+    x264_picture_t pic_out;
     int luma_size = width * height;
     int chroma_size = luma_size / 4;
     i_frame++;
@@ -84,6 +98,7 @@ int x264_yuv420p2h264(uint8_t* src,uint8_t* dst, uint32_t dstlen,uint32_t width,
         }
     }
     /* Flush delayed frames */
+    #if 1
     while( x264_encoder_delayed_frames( h ) )
     {
         i_frame_size = x264_encoder_encode( h, &nal, &i_nal, NULL, &pic_out );
@@ -107,10 +122,9 @@ int x264_yuv420p2h264(uint8_t* src,uint8_t* dst, uint32_t dstlen,uint32_t width,
             }
         }
     }
-
+    #endif
     x264_encoder_close( h );
     x264_picture_clean( &pic );
-
     return outlen;
 }
 

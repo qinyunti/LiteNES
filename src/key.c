@@ -134,7 +134,7 @@ void* key_poll(void* arg)
 				if(t.value==0 || t.value==1)
 				{
 					key_setstate(t.code, t.value, &s_keys_state);
-					///printf("key %d %s\n", t.code, (t.value) ? "Pressed" : "Released");
+					//printf("key %d %s\n", t.code, (t.value) ? "Pressed" : "Released");
 					//if(t.code == KEY_ESC)
 					//	break;
 				}

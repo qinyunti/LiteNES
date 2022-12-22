@@ -1,7 +1,7 @@
 #ifndef DIS_H
 #define DIS_H
 
-#define DIS_WIDTH 240
+#define DIS_WIDTH 256
 #define DIS_HEIGHT 240
 
 void dis_set_pixel(int x,int y, uint8_t r,uint8_t g,uint8_t b);

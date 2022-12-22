@@ -1,4 +1,4 @@
-#define FPS 60
+#define FPS 80
 #define SCREEN_WIDTH 256
 #define SCREEN_HEIGHT 240
 

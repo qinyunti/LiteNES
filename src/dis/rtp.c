@@ -179,7 +179,8 @@ int rtp_send_h264(uint8_t* src, uint32_t len)
             break;
         }
         forward_h264frame(session,src_buff+headlen,framelen-headlen,user_ts);
-		///user_ts+=framelen-headlen;
+		//user_ts+=(framelen-headlen)/TS_INC;
+        user_ts+=TS_INC;
         src_buff += framelen;
         s_sendlen_u32+=framelen;
         if(s_sendlen_u32 >= len)
