@@ -153,12 +153,6 @@ void lcd_clear(uint32_t color)
     }
 }
 
-void lcd_getsize(uint32_t* x,uint32_t* y)
-{
-    *x = vinfo.xres;
-    *y = vinfo.yres;
-}
-
 
 #if LCD_TEST
 int main(int argc, char* argv[])

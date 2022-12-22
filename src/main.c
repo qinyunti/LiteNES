@@ -14,14 +14,13 @@ How does the emulator work?
   5) call fce_run(), which is a non-exiting loop simulating the NES system
   6) when SIGINT signal is received, it kills itself
 */
-
 #include "fce.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
-#include "lcd.h"
 #include "key.h"
+#include "main.h"
 
 static char rom[1048576];
 
@@ -32,11 +31,19 @@ void do_exit() // normal exit at SIGINT
 
 int main(int argc, char *argv[])
 {
-    if (argc != 4)
+#if USE_LCD_RTP
+    if (argc != 5)
     {
-        fprintf(stderr, "Usage: mynes romfile.nes\n");
+        fprintf(stderr, "Usage: litenes romfile.nes ip port input\n");
         exit(1);
     }
+#else
+    if (argc != 4)
+    {
+        fprintf(stderr, "Usage: litenes romfile.nes fbd input\n");
+        exit(1);
+    }
+#endif
     FILE *fp = fopen(argv[1], "r");
     if (fp == NULL)
     {
@@ -54,8 +61,13 @@ int main(int argc, char *argv[])
         exit(1);
     }
     signal(SIGINT, do_exit);
+  #if USE_LCD_RTP
+    lcd_init(argv[2],atoi(argv[3]));
+    key_init(argv[4]);
+  #else
     lcd_init(argv[2]);
     key_init(argv[3]);
+  #endif
     fce_init();
     fce_run();
     return 0;

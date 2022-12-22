@@ -40,7 +40,7 @@ To port this project, replace the following functions by your own:
 #include "hal.h"
 #include "fce.h"
 #include "common.h"
-#include "lcd.h"
+#include "main.h"
 #include "key.h"
 
 typedef uint32_t COLOR;
