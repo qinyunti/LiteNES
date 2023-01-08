@@ -28,28 +28,22 @@ typedef struct {
     int x, scanline;
 } PPU_STATE;
 
-PPU_STATE ppu;
+extern PPU_STATE ppu;
 
-byte ppu_latch;
-bool ppu_sprite_hit_occured = false;
+extern byte ppu_latch;
+extern bool ppu_sprite_hit_occured;
 
 word ppu_get_real_ram_address(word address);
-
-
-// PPU Constants
-
-static const word ppu_base_nametable_addresses[4] = { 0x2000, 0x2400, 0x2800, 0x2C00 };
-
 
 
 // Screen State and Rendering
 
 // For sprite-0-hit checks
-byte ppu_screen_background[264][248];
+extern byte ppu_screen_background[264][248];
 
 // Precalculated tile high and low bytes addition for pattern tables
-byte ppu_l_h_addition_table[256][256][8];
-byte ppu_l_h_addition_flip_table[256][256][8];
+extern byte ppu_l_h_addition_table[256][256][8];
+extern byte ppu_l_h_addition_flip_table[256][256][8];
 
 // Draws current screen pixels in ppu_background_pixels & ppu_sprite_pixels and clears them
 void ppu_render_screen();

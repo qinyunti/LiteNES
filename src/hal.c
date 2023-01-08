@@ -42,16 +42,44 @@ To port this project, replace the following functions by your own:
 #include "common.h"
 #include "main.h"
 #include "key.h"
+#include <sys/time.h>
 
 typedef uint32_t COLOR;
 COLOR color_map[64];
-  
+static int sx = 1;
+static int sy = 1;
+
+long long pre_time = 0;
+long long now_time = 0;
+long long total_time = 0;
+int fnum = 0;
+
+long long get_ms(void)
+{
+    struct timeval t;
+    gettimeofday(&t,NULL);
+    return (long long)t.tv_sec * 1000 + (long long)t.tv_usec / 1000;
+}
+
 /* Wait until next allegro timer event is fired. 
  * fce_run中循环调用该函数,用该函数延时控制1/FPS(S)执行一次
  */
 void wait_for_frame()
 {
-    usleep(1000000ul/FPS);
+    now_time = get_ms();
+    if((now_time - pre_time) < 1000ul/FPS)
+    {
+        //usleep((1000ul/FPS - (now_time - pre_time))*1000);
+    }
+    fnum++;
+    total_time += (now_time - pre_time);
+    if(fnum >= 1)
+    {
+        printf("ftime=%dms\r\n",total_time/fnum);
+        fnum=0;
+        total_time=0;
+    }
+    pre_time = now_time;
 }
 
 /* Set background color. RGB value of c is defined in fce.h 
@@ -81,13 +109,27 @@ void nes_flush_buf(PixelBuf *buf) {
             fprintf(stderr,"nes_flush_buf c:%d\r\n",p->c);
         }
         COLOR c = color_map[p->c];
+    #if 0
         if(s_lcd_index == 0)
         {
-            lcd_setpixel(1,x,y,c);
+            for(int ix=0;ix<sx;ix++)
+            {
+                for(int iy=0;iy<sy;iy++)
+                {
+                    lcd_setpixel(1,x*sx+ix,y*sy+iy,c);
+                }
+            }
         }
-        else
+    #endif
+        //else
         {
-            lcd_setpixel(0,x,y,c);  
+            for(int ix=0;ix<sx;ix++)
+            {
+                for(int iy=0;iy<sy;iy++)
+                {
+                    lcd_setpixel(0,x*sx+ix,y*sy+iy,c);
+                }
+            }
         }
     }
 }
@@ -101,6 +143,11 @@ void nes_hal_init()
     {
         color_map[i] = ((uint32_t)palette[i].r<<16) | ((uint32_t)palette[i].g<<8) | ((uint32_t)palette[i].b<<0);
     }
+    uint32_t x;
+    uint32_t y;
+    lcd_getsize(&x,&y);
+    sx = x / 256;
+    sy = y / 256;
 }
 
 /* Update screen at FPS rate by allegro's drawing function. 
@@ -110,6 +157,7 @@ void nes_flip_display()
     /* 在nes_flush_buf后调用  
      * 真正将数据写入LCD显示 nes_flush_buf中已经显示了这里不再显示
      */
+#if 0
     if(s_lcd_index == 0)
     {
         s_lcd_index = 1;
@@ -119,6 +167,7 @@ void nes_flip_display()
         s_lcd_index = 0;
     }
     lcd_switch(s_lcd_index);
+#endif
 }
 
 /* Query a button's state.

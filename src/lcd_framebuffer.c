@@ -82,7 +82,7 @@ int lcd_init(char* dev)
     fprintf(stderr,"blue offset:%d length:%d msb_right:%d\r\n",vinfo.blue.offset,vinfo.blue.length,vinfo.blue.msb_right);  
     fprintf(stderr,"transp offset:%d length:%d msb_right:%d\r\n",vinfo.transp.offset,vinfo.transp.length,vinfo.transp.msb_right); 
     
-    lcd_clear(0x000000);
+    ///lcd_clear(0x000000);
     ///sleep(2);
     ///lcd_clear(0xff371a);
     ///sleep(2);
@@ -153,6 +153,11 @@ void lcd_clear(uint32_t color)
     }
 }
 
+void lcd_getsize(uint32_t* x,uint32_t* y)
+{
+    *x = vinfo.xres;
+    *y = vinfo.yres;
+}
 
 #if LCD_TEST
 int main(int argc, char* argv[])
@@ -169,7 +174,7 @@ int main(int argc, char* argv[])
     {
         for(int j=0;j<vinfo.yres;j++)
         {
-            lcd_setpixel(i, j, (i<<12 | j));
+            lcd_setpixel(0,i, j, (i<<12 | j));
         }
     }
 }

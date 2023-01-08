@@ -10,6 +10,24 @@ byte ppu_sprite_palette[4][4];
 bool ppu_2007_first_read;
 byte ppu_addr_latch;
 
+byte PPU_SPRRAM[0x100];
+byte PPU_RAM[0x4000];
+
+PPU_STATE ppu;
+
+byte ppu_latch;
+bool ppu_sprite_hit_occured = false;
+
+// PPU Constants
+
+static const word ppu_base_nametable_addresses[4] = { 0x2000, 0x2400, 0x2800, 0x2C00 };
+
+// For sprite-0-hit checks
+byte ppu_screen_background[264][248];
+
+// Precalculated tile high and low bytes addition for pattern tables
+byte ppu_l_h_addition_table[256][256][8];
+byte ppu_l_h_addition_flip_table[256][256][8];
 
 
 // PPUCTRL Functions

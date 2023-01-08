@@ -119,12 +119,6 @@ void* key_poll(void* arg)
 {
 	char ret[2];
 	struct input_event t;
-	s_keys_fd = open((char*)arg, O_RDONLY);
-	if(s_keys_fd <= 0)
-	{
-		printf("open %s device error!\n",(char*)arg);
-		return 0;
-	}
 	while(1)
 	{
 		if(read(s_keys_fd, &t, sizeof(t)) == sizeof(t))
@@ -134,7 +128,7 @@ void* key_poll(void* arg)
 				if(t.value==0 || t.value==1)
 				{
 					key_setstate(t.code, t.value, &s_keys_state);
-					//printf("key %d %s\n", t.code, (t.value) ? "Pressed" : "Released");
+					printf("key %d %s\n", t.code, (t.value) ? "Pressed" : "Released");
 					//if(t.code == KEY_ESC)
 					//	break;
 				}
@@ -144,6 +138,7 @@ void* key_poll(void* arg)
 				///printf("type %d code %d value %d\n", t.type, t.code, t.value);
 			}
 		}
+		usleep(10000);
 	}
 	return 0;
 }
@@ -151,6 +146,12 @@ void* key_poll(void* arg)
 void key_init(void* arg)
 {
 	pthread_t id;
+	s_keys_fd = open((char*)arg, O_RDONLY);
+	if(s_keys_fd <= 0)
+	{
+		printf("open %s device error!\n",(char*)arg);
+		//return 0;
+	}
 	/* 创建函数线程，并且指定函数线程要执行的函数 */
 	int res = pthread_create(&id,NULL,key_poll,arg);
 	if(res !=0 )
